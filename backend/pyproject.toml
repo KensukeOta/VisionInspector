@@ -1,0 +1,28 @@
+[project]
+name = "vision-inspector-backend"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "python-multipart>=0.0.20",
+
+    "torch==2.5.1+cpu",
+    "torchvision==0.20.1+cpu",
+
+    "anomalib==2.5.0",
+
+    "opencv-python-headless",
+    "numpy",
+    "pillow",
+]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

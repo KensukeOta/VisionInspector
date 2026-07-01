@@ -1,0 +1,19 @@
+services:
+  backend:
+    build: .
+    container_name: vision-inspector-backend
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - .:/app
+      - backend_venv:/opt/venv
+
+    environment:
+      PYTHONUNBUFFERED: 1
+      UV_LINK_MODE: copy
+      UV_PROJECT_ENVIRONMENT: /opt/venv
+
+volumes:
+  backend_venv:
