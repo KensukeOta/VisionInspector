@@ -1,8 +1,10 @@
 from pathlib import Path
+from typing import Any, cast
 
 import cv2
 import numpy as np
 import torch
+from torch import Tensor
 from torchvision import transforms
 
 from app.core.config import OUTPUT_DIR
@@ -28,11 +30,12 @@ class InferenceService:
             ]
         )
 
-    def predict(self, image_path: Path) -> dict:
+    def predict(self, image_path: Path) -> dict[str, Any]:
         image = load_rgb_image(image_path)
         original_np = np.array(image)
 
-        input_tensor = self.transform(image).unsqueeze(0)
+        transformed = cast(Tensor, self.transform(image))
+        input_tensor = transformed.unsqueeze(0)
 
         with torch.no_grad():
             prediction = self.model(input_tensor)

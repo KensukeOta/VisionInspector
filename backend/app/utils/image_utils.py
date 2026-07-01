@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import cast
 from uuid import uuid4
 
 import cv2
@@ -15,12 +16,19 @@ def normalize_map(x: np.ndarray) -> np.ndarray:
 
 
 def create_overlay(
-    image_np: np.ndarray, anomaly_map: np.ndarray, alpha: float = 0.45
+    image_np: np.ndarray,
+    anomaly_map: np.ndarray,
+    alpha: float = 0.45,
 ) -> np.ndarray:
     anomaly_map = normalize_map(anomaly_map)
 
+    heatmap_input = cast(
+        np.ndarray,
+        (anomaly_map * 255).astype(np.uint8),
+    )
+
     heatmap = cv2.applyColorMap(
-        np.uint8(255 * anomaly_map),
+        heatmap_input,
         cv2.COLORMAP_JET,
     )
     heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
@@ -34,7 +42,10 @@ def create_overlay(
     return overlay
 
 
-def save_overlay_image(overlay: np.ndarray, output_dir: Path) -> Path:
+def save_overlay_image(
+    overlay: np.ndarray,
+    output_dir: Path,
+) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     filename = f"{uuid4().hex}.png"
