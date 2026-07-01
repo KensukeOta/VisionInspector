@@ -1,25 +1,26 @@
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, UploadFile
 
+from app.dependencies import get_inference_service
 from app.schemas.prediction import PredictionResponse
 from app.services.inference_service import InferenceService
-from app.dependencies import get_inference_service
-
 
 router = APIRouter()
 
 
 @router.post("/predict", response_model=PredictionResponse)
 async def predict(
-    file: UploadFile = File(...),
+    file: Annotated[
+        UploadFile,
+        File(...),
+    ],
     inference_service: Annotated[
         InferenceService,
         Depends(get_inference_service),
-    ] = None,
+    ],
 ) -> PredictionResponse:
     suffix = Path(file.filename or "").suffix or ".png"
 
