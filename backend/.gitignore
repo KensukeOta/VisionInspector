@@ -10,3 +10,4 @@ wheels/
 .venv
 outputs
 __pycache__
+checkpoints/*.ckpt
