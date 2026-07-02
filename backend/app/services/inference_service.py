@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, cast
+from typing import cast
 
 import cv2
 import numpy as np
@@ -8,7 +8,8 @@ from torch import Tensor
 from torchvision import transforms
 
 from app.core.config import OUTPUT_DIR
-from app.services.model_loader import load_padim_model
+from app.schemas.prediction_result import PredictionResult
+from app.services.model_loader import ModelName, model_loader
 from app.utils.image_utils import (
     create_overlay,
     load_rgb_image,
@@ -17,8 +18,9 @@ from app.utils.image_utils import (
 
 
 class InferenceService:
-    def __init__(self) -> None:
-        self.model = load_padim_model()
+    def __init__(self, model_name: ModelName = "padim") -> None:
+        self.model_name = model_name
+        self.model = model_loader.get(model_name)
         self.transform = transforms.Compose(
             [
                 transforms.Resize((256, 256)),
@@ -30,7 +32,7 @@ class InferenceService:
             ]
         )
 
-    def predict(self, image_path: Path) -> dict[str, Any]:
+    def predict(self, image_path: Path) -> PredictionResult:
         image = load_rgb_image(image_path)
         original_np = np.array(image)
 
@@ -59,8 +61,9 @@ class InferenceService:
             output_dir=OUTPUT_DIR,
         )
 
-        return {
-            "score": score,
-            "label": label,
-            "overlay_path": str(overlay_path),
-        }
+        return PredictionResult(
+            model=self.model_name,
+            score=score,
+            label=label,
+            overlay_path=str(overlay_path),
+        )

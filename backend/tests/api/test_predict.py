@@ -4,15 +4,17 @@ from fastapi.testclient import TestClient
 
 from app.dependencies import get_inference_service
 from app.main import app
+from app.schemas.prediction_result import PredictionResult
 
 
 class DummyInferenceService:
-    def predict(self, image_path: Path) -> dict:
-        return {
-            "score": 0.95,
-            "label": True,
-            "overlay_path": "outputs/test.png",
-        }
+    def predict(self, image_path: Path) -> PredictionResult:
+        return PredictionResult(
+            model="padim",
+            score=0.95,
+            label=True,
+            overlay_path="outputs/test.png",
+        )
 
 
 def override_service() -> DummyInferenceService:

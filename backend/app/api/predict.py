@@ -51,17 +51,17 @@ async def predict(
             detail="Prediction failed.",
         ) from exc
 
-    label = result["label"]
+    label = result.label
     message = "Anomaly detected" if label else "Normal image"
 
-    overlay_path = Path(result["overlay_path"])
+    overlay_path = Path(result.overlay_path)
     overlay_url = f"/outputs/{overlay_path.name}"
 
     processing_time_ms = (time.perf_counter() - start_time) * 1000
 
     return PredictionResponse(
-        model=model,
-        score=result["score"],
+        model=result.model,
+        score=result.score,
         label=label,
         message=message,
         overlay_url=overlay_url,
