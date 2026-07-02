@@ -11,3 +11,6 @@ wheels/
 outputs
 __pycache__
 checkpoints/*.ckpt
+
+.pytest_cache
+.ruff_cache
