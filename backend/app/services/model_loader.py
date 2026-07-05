@@ -1,10 +1,7 @@
-from typing import Literal
-
 from anomalib.models.image.padim import Padim
 
 from app.core.config import PADIM_CHECKPOINT
-
-ModelName = Literal["padim"]
+from app.core.model_names import ModelName
 
 
 class ModelLoader:

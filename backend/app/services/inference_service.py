@@ -8,8 +8,9 @@ from torch import Tensor
 from torchvision import transforms
 
 from app.core.config import OUTPUT_DIR
+from app.core.model_names import ModelName
 from app.schemas.prediction_result import PredictionResult
-from app.services.model_loader import ModelName, model_loader
+from app.services.model_loader import model_loader
 from app.utils.image_utils import (
     create_overlay,
     load_rgb_image,

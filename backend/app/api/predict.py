@@ -5,6 +5,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 
+from app.core.model_names import SUPPORTED_MODELS
 from app.dependencies import get_inference_service
 from app.schemas.prediction import PredictionResponse
 from app.services.inference_service import InferenceService
@@ -25,7 +26,7 @@ async def predict(
 ) -> PredictionResponse:
     start_time = time.perf_counter()
 
-    if model != "padim":
+    if model not in SUPPORTED_MODELS:
         raise HTTPException(
             status_code=400,
             detail=f"Unsupported model: {model}",
