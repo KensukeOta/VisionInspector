@@ -1,5 +1,7 @@
 # Vision Inspector
 
+![Backend CI](https://github.com/KensukeOta/VisionInspector/actions/workflows/backend-ci.yml/badge.svg)  
+
 AIによる画像異常検知Webアプリケーションです。
 
 Anomalib（PaDiM）を利用し、画像をアップロードするだけで異常箇所を検出し、ヒートマップ付きの異常マップをブラウザ上で確認できます。
