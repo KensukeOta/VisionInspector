@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { SelectedImage } from '$lib/types/image';
 	import { formatFileSize } from '$lib/utils/image';
-	import Card from './Card.svelte';
+	import Card from '$lib/components/ui/Card.svelte';
 
 	type Props = {
 		image: SelectedImage;

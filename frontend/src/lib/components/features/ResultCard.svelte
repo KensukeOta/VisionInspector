@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PredictionResponse } from '$lib/types/prediction';
-	import Card from './Card.svelte';
+	import Card from '$lib/components/ui/Card.svelte';
 
 	type Props = {
 		result: PredictionResponse;

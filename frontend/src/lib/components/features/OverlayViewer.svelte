@@ -1,7 +1,7 @@
 <script lang="ts">
-	import Card from '$lib/components/Card.svelte';
 	import type { SelectedImage } from '$lib/types/image';
 	import type { PredictionResponse } from '$lib/types/prediction';
+	import Card from '$lib/components/ui/Card.svelte';
 
 	type Props = {
 		image: SelectedImage;

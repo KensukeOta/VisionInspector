@@ -4,12 +4,12 @@
 	import type { SelectedImage } from '$lib/types/image';
 	import { predictImage } from '$lib/api/client';
 	import { createSelectedImage } from '$lib/utils/image';
-	import ModelSelector from '$lib/components/ModelSelector.svelte';
-	import UploadArea from '$lib/components/UploadArea.svelte';
-	import ResultCard from '$lib/components/ResultCard.svelte';
-	import OverlayViewer from '$lib/components/OverlayViewer.svelte';
-	import ImagePreview from '$lib/components/ImagePreview.svelte';
-	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
+	import ImagePreview from '$lib/components/features/ImagePreview.svelte';
+	import ModelSelector from '$lib/components/features/ModelSelector.svelte';
+	import OverlayViewer from '$lib/components/features/OverlayViewer.svelte';
+	import ResultCard from '$lib/components/features/ResultCard.svelte';
+	import UploadArea from '$lib/components/features/UploadArea.svelte';
+	import LoadingSpinner from '$lib/components/ui/LoadingSpinner.svelte';
 
 	let selectedModel = $state<ModelName>('padim');
 
