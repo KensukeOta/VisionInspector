@@ -9,6 +9,7 @@
 	import ResultCard from '$lib/components/ResultCard.svelte';
 	import OverlayViewer from '$lib/components/OverlayViewer.svelte';
 	import ImagePreview from '$lib/components/ImagePreview.svelte';
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 
 	let selectedModel = $state<ModelName>('padim');
 
@@ -73,10 +74,13 @@
 			type="button"
 			class="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
 			onclick={handlePredict}
-			disabled={isLoading}
+			disabled={isLoading || !selectedImage}
 		>
-			{isLoading ? '推論中...' : '推論する'}
+			推論する
 		</button>
+		{#if isLoading}
+			<LoadingSpinner />
+		{/if}
 	{/if}
 
 	{#if prediction}
