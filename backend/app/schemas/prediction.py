@@ -1,13 +1,11 @@
-from typing import Annotated
-
-from fastapi import Query
 from pydantic import BaseModel
 
 
 class PredictionResponse(BaseModel):
-    model: Annotated[str, Query()] = "padim"
+    model: str
     score: float
     label: bool
     message: str
+    description: str
     overlay_url: str
     processing_time_ms: float

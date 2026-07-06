@@ -41,6 +41,9 @@ def test_predict() -> None:
     assert body["score"] == 0.95
     assert body["label"] is True
     assert body["message"] == "Anomaly detected"
+    assert body["description"] == (
+        "モデルが異常の可能性が高いと判定しました。オーバーレイ画像で異常箇所を確認してください。"
+    )
     assert body["overlay_url"] == "/outputs/test.png"
     assert isinstance(body["processing_time_ms"], float)
 

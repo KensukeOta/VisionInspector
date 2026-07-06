@@ -1,11 +1,9 @@
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import cv2
 import numpy as np
-import torch
-from torch import Tensor
-from torchvision import transforms
+from anomalib.engine import Engine
 
 from app.core.config import OUTPUT_DIR
 from app.core.model_names import ModelName
@@ -22,30 +20,29 @@ class InferenceService:
     def __init__(self, model_name: ModelName = "padim") -> None:
         self.model_name = model_name
         self.model = model_loader.get(model_name)
-        self.transform = transforms.Compose(
-            [
-                transforms.Resize((256, 256)),
-                transforms.ToTensor(),
-                transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225],
-                ),
-            ]
+        self.engine = Engine(
+            accelerator="cpu",
+            devices=1,
         )
 
     def predict(self, image_path: Path) -> PredictionResult:
         image = load_rgb_image(image_path)
         original_np = np.array(image)
 
-        transformed = cast(Tensor, self.transform(image))
-        input_tensor = transformed.unsqueeze(0)
+        predictions = self.engine.predict(
+            model=self.model,
+            data_path=str(image_path),
+            return_predictions=True,
+        )
 
-        with torch.no_grad():
-            prediction = self.model(input_tensor)
+        if not predictions:
+            raise RuntimeError("Prediction failed.")
 
-        anomaly_map = prediction.anomaly_map.squeeze().detach().cpu().numpy()
-        score = float(prediction.pred_score.squeeze().detach().cpu().item())
-        label = bool(prediction.pred_label.squeeze().detach().cpu().item())
+        batch = cast(Any, predictions[0])
+
+        anomaly_map = batch.anomaly_map[0].detach().cpu().numpy()
+        score = float(batch.pred_score[0].detach().cpu().item())
+        label = bool(batch.pred_label[0].detach().cpu().item())
 
         anomaly_map_resized = cv2.resize(
             anomaly_map,

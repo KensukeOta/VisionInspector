@@ -55,6 +55,17 @@ async def predict(
     label = result.label
     message = "Anomaly detected" if label else "Normal image"
 
+    if label:
+        description = (
+            "モデルが異常の可能性が高いと判定しました。"
+            "オーバーレイ画像で異常箇所を確認してください。"
+        )
+    else:
+        description = (
+            "モデルが正常画像として判定しました。"
+            "異常スコアは参考値として確認してください。"
+        )
+
     overlay_path = Path(result.overlay_path)
     overlay_url = f"/outputs/{overlay_path.name}"
 
@@ -65,6 +76,7 @@ async def predict(
         score=result.score,
         label=label,
         message=message,
+        description=description,
         overlay_url=overlay_url,
         processing_time_ms=round(processing_time_ms, 2),
     )
