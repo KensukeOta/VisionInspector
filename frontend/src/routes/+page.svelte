@@ -1,15 +1,18 @@
 <script lang="ts">
 	import type { PredictionResponse } from '$lib/types/prediction';
 	import type { ModelName } from '$lib/types/model';
+	import type { SelectedImage } from '$lib/types/image';
 	import { predictImage } from '$lib/api/client';
+	import { createSelectedImage } from '$lib/utils/image';
 	import ModelSelector from '$lib/components/ModelSelector.svelte';
 	import UploadArea from '$lib/components/UploadArea.svelte';
 	import ResultCard from '$lib/components/ResultCard.svelte';
 	import OverlayViewer from '$lib/components/OverlayViewer.svelte';
+	import ImagePreview from '$lib/components/ImagePreview.svelte';
 
 	let selectedModel = $state<ModelName>('padim');
 
-	let selectedFile = $state<File | null>(null);
+	let selectedImage = $state<SelectedImage | null>(null);
 
 	let prediction = $state<PredictionResponse | null>(null);
 
@@ -17,12 +20,18 @@
 
 	let errorMessage = $state('');
 
-	function handleFileSelected(file: File) {
-		selectedFile = file;
+	async function handleFileSelected(file: File) {
+		if (selectedImage) {
+			URL.revokeObjectURL(selectedImage.url);
+		}
+
+		selectedImage = await createSelectedImage(file);
+		prediction = null;
+		errorMessage = '';
 	}
 
 	async function handlePredict() {
-		if (!selectedFile) {
+		if (!selectedImage) {
 			return;
 		}
 
@@ -31,7 +40,7 @@
 
 		try {
 			prediction = await predictImage({
-				file: selectedFile,
+				file: selectedImage.file,
 				model: selectedModel
 			});
 		} catch (error) {
@@ -57,25 +66,16 @@
 
 	<UploadArea onFileSelected={handleFileSelected} />
 
-	{#if selectedFile}
-		<div class="rounded-lg border bg-white p-4 shadow-sm">
-			<p class="font-medium">選択中のファイル</p>
-			<p class="mt-2 text-slate-600">
-				{selectedFile.name}
-			</p>
-		</div>
+	{#if selectedImage}
+		<ImagePreview image={selectedImage} />
 
 		<button
 			type="button"
 			class="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
 			onclick={handlePredict}
-			disabled={!selectedFile || isLoading}
+			disabled={isLoading}
 		>
-			{#if isLoading}
-				推論中...
-			{:else}
-				推論する
-			{/if}
+			{isLoading ? '推論中...' : '推論する'}
 		</button>
 	{/if}
 
