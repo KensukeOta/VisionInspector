@@ -10,6 +10,8 @@
 	import ResultCard from '$lib/components/features/ResultCard.svelte';
 	import UploadArea from '$lib/components/features/UploadArea.svelte';
 	import LoadingSpinner from '$lib/components/ui/LoadingSpinner.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
+	import ErrorMessage from '$lib/components/ui/ErrorMessage.svelte';
 
 	let selectedModel = $state<ModelName>('padim');
 
@@ -67,17 +69,14 @@
 
 	<UploadArea onFileSelected={handleFileSelected} />
 
+	{#if errorMessage}
+		<ErrorMessage message={errorMessage} />
+	{/if}
+
 	{#if selectedImage}
 		<ImagePreview image={selectedImage} />
 
-		<button
-			type="button"
-			class="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-			onclick={handlePredict}
-			disabled={isLoading || !selectedImage}
-		>
-			推論する
-		</button>
+		<Button onclick={handlePredict} disabled={!selectedImage || isLoading}>推論する</Button>
 		{#if isLoading}
 			<LoadingSpinner />
 		{/if}
@@ -87,7 +86,7 @@
 		<ResultCard result={prediction} />
 	{/if}
 
-	{#if selectedImage && prediction}
+	{#if selectedImage}
 		<OverlayViewer image={selectedImage} result={prediction} />
 	{/if}
 </div>

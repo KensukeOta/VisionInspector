@@ -2,15 +2,16 @@
 	import type { SelectedImage } from '$lib/types/image';
 	import type { PredictionResponse } from '$lib/types/prediction';
 	import Card from '$lib/components/ui/Card.svelte';
+	import EmptyState from '$lib/components/ui/EmptyState.svelte';
 
 	type Props = {
 		image: SelectedImage;
-		result: PredictionResponse;
+		result: PredictionResponse | null;
 	};
 
 	let { image, result }: Props = $props();
 
-	const overlayUrl = $derived(`http://localhost:8000${result.overlay_url}`);
+	const overlayUrl = $derived(`http://localhost:8000${result?.overlay_url}`);
 </script>
 
 <Card>
@@ -30,11 +31,18 @@
 		<div>
 			<p class="mb-2 text-sm font-medium text-slate-700">Overlay画像</p>
 
-			<img
-				src={overlayUrl}
-				alt="異常マップの重ね合わせ"
-				class="mx-auto max-h-96 rounded-lg border object-contain"
-			/>
+			{#if result}
+				<img
+					src={overlayUrl}
+					alt="異常マップの重ね合わせ"
+					class="mx-auto max-h-96 rounded-lg border object-contain"
+				/>
+			{:else}
+				<EmptyState
+					title="まだ推論していません"
+					description="推論を実行するとAIが異常箇所をヒートマップで表示します。"
+				/>
+			{/if}
 		</div>
 	</div>
 
