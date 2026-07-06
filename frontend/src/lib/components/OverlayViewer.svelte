@@ -1,25 +1,44 @@
 <script lang="ts">
+	import Card from '$lib/components/Card.svelte';
+	import type { SelectedImage } from '$lib/types/image';
 	import type { PredictionResponse } from '$lib/types/prediction';
 
 	type Props = {
+		image: SelectedImage;
 		result: PredictionResponse;
 	};
 
-	let { result }: Props = $props();
+	let { image, result }: Props = $props();
+
+	const overlayUrl = $derived(`http://localhost:8000${result.overlay_url}`);
 </script>
 
-<div class="rounded-xl border bg-white p-6 shadow-sm">
+<Card>
 	<h2 class="mb-6 text-xl font-semibold">異常マップ</h2>
 
-	{#if result.overlay_url}
-		<img
-			src={`http://localhost:8000${result.overlay_url}`}
-			alt="Overlay"
-			class="mx-auto rounded-lg"
-		/>
-	{:else}
-		<div class="rounded-lg border border-dashed p-12 text-center text-slate-400">
-			推論を実行するとオーバーレイ画像が表示されます
+	<div class="grid gap-6 md:grid-cols-2">
+		<div>
+			<p class="mb-2 text-sm font-medium text-slate-700">元画像</p>
+
+			<img
+				src={image.url}
+				alt={image.file.name}
+				class="mx-auto max-h-96 rounded-lg border object-contain"
+			/>
 		</div>
-	{/if}
-</div>
+
+		<div>
+			<p class="mb-2 text-sm font-medium text-slate-700">Overlay画像</p>
+
+			<img
+				src={overlayUrl}
+				alt="異常マップの重ね合わせ"
+				class="mx-auto max-h-96 rounded-lg border object-contain"
+			/>
+		</div>
+	</div>
+
+	<p class="mt-4 text-sm leading-6 text-slate-600">
+		左は入力画像、右はAIが異常と判断した領域をヒートマップとして重ね合わせた画像です。
+	</p>
+</Card>

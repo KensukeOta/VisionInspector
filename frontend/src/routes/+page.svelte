@@ -87,7 +87,7 @@
 		<ResultCard result={prediction} />
 	{/if}
 
-	{#if prediction}
-		<OverlayViewer result={prediction} />
+	{#if selectedImage && prediction}
+		<OverlayViewer image={selectedImage} result={prediction} />
 	{/if}
 </div>

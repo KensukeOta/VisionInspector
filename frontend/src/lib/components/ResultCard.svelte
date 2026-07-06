@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PredictionResponse } from '$lib/types/prediction';
+	import Card from './Card.svelte';
 
 	type Props = {
 		result: PredictionResponse;
@@ -10,7 +11,7 @@
 	const scorePercent = $derived((result.score * 100).toFixed(1));
 </script>
 
-<div class="rounded-xl border bg-white p-6 shadow-sm">
+<Card>
 	<h2 class="mb-6 text-xl font-semibold">推論結果</h2>
 
 	<div class="grid gap-4 sm:grid-cols-2">
@@ -54,4 +55,4 @@
 			</p>
 		</div>
 	</div>
-</div>
+</Card>
