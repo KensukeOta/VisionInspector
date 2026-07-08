@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href="/favicon.png" />
 
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content="VisionInspector" />
