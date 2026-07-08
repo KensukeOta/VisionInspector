@@ -3,11 +3,12 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Annotated
 
-from fastapi import APIRouter, File, HTTPException, Query, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 
 from app.core.model_names import SUPPORTED_MODELS
 from app.dependencies import get_inference_service
 from app.schemas.prediction import PredictionResponse
+from app.services.inference_service import InferenceService
 
 router = APIRouter()
 
@@ -16,15 +17,20 @@ ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 
 @router.post("/predict", response_model=PredictionResponse)
 async def predict(
+    inference_service: Annotated[
+        InferenceService,
+        Depends(get_inference_service),
+    ],
     file: Annotated[UploadFile, File(...)],
     model: Annotated[str, Query()] = "padim",
 ) -> PredictionResponse:
     start_time = time.perf_counter()
 
-    print("[predict] request received", flush=True)
-
     if model not in SUPPORTED_MODELS:
-        raise HTTPException(status_code=400, detail=f"Unsupported model: {model}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported model: {model}",
+        )
 
     suffix = Path(file.filename or "").suffix.lower()
 
@@ -39,28 +45,26 @@ async def predict(
         tmp_path = Path(tmp.name)
 
     try:
-        print("[predict] loading inference service", flush=True)
-        inference_service = get_inference_service()
-
-        print("[predict] running prediction", flush=True)
         result = inference_service.predict(tmp_path)
-
-        print("[predict] prediction finished", flush=True)
-
     except Exception as exc:
-        print(f"[predict] error: {type(exc).__name__}: {exc}", flush=True)
-        raise HTTPException(status_code=500, detail="Prediction failed.") from exc
+        raise HTTPException(
+            status_code=500,
+            detail="Prediction failed.",
+        ) from exc
 
     label = result.label
     message = "Anomaly detected" if label else "Normal image"
 
-    description = (
-        "モデルが異常の可能性が高いと判定しました。"
-        "オーバーレイ画像で異常箇所を確認してください。"
-        if label
-        else "モデルが正常画像として判定しました。"
-        "異常スコアは参考値として確認してください。"
-    )
+    if label:
+        description = (
+            "モデルが異常の可能性が高いと判定しました。"
+            "オーバーレイ画像で異常箇所を確認してください。"
+        )
+    else:
+        description = (
+            "モデルが正常画像として判定しました。"
+            "異常スコアは参考値として確認してください。"
+        )
 
     overlay_path = Path(result.overlay_path)
     overlay_url = f"/outputs/{overlay_path.name}"

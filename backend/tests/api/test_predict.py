@@ -26,27 +26,26 @@ app.dependency_overrides[get_inference_service] = override_service
 client = TestClient(app)
 
 
-# def test_predict() -> None:
-#     files = {
-#         "file": ("test.png", b"fake image", "image/png"),
-#     }
+def test_predict() -> None:
+    files = {
+        "file": ("test.png", b"fake image", "image/png"),
+    }
 
-#     response = client.post("/predict?model=padim", files=files)
+    response = client.post("/predict?model=padim", files=files)
 
-#     assert response.status_code == 200
+    assert response.status_code == 200
 
-#     body = response.json()
+    body = response.json()
 
-#     assert body["model"] == "padim"
-#     assert body["score"] == 0.95
-#     assert body["label"] is True
-#     assert body["message"] == "Anomaly detected"
-#     assert body["description"] == (
-#         "モデルが異常の可能性が高いと判定しました。"
-#         "オーバーレイ画像で異常箇所を確認してください。"
-#     )
-#     assert body["overlay_url"] == "/outputs/test.png"
-#     assert isinstance(body["processing_time_ms"], float)
+    assert body["model"] == "padim"
+    assert body["score"] == 0.95
+    assert body["label"] is True
+    assert body["message"] == "Anomaly detected"
+    assert body["description"] == (
+        "モデルが異常の可能性が高いと判定しました。オーバーレイ画像で異常箇所を確認してください。"
+    )
+    assert body["overlay_url"] == "/outputs/test.png"
+    assert isinstance(body["processing_time_ms"], float)
 
 
 def test_predict_rejects_unsupported_model() -> None:

@@ -139,6 +139,9 @@ VisionInspector
 │   ├── checkpoints
 │   ├── tests
 │   └── pyproject.toml
+│   └── Dockerfile
+│   └── Dockerfile.dev
+│   └── docker-compose.yml
 │
 ├── frontend
 │   ├── src
@@ -159,7 +162,6 @@ VisionInspector
 | Backend           | FastAPI          |
 | Deep Learning     | PyTorch          |
 | Anomaly Detection | Anomalib (PaDiM) |
-| Deep Learning     | PyTorch          |
 | Package Manager   | uv               |
 | Lint              | Ruff             |
 | Type Check        | Pyright          |
@@ -202,10 +204,31 @@ model : padim
 
 ---
 
+## デプロイについて
+
+Frontend は Vercel にデプロイしています。
+
+Backend は Render へのデプロイを試行しましたが、PaDiM モデルは Anomalib / PyTorch / checkpoint の読み込み時に一定のメモリを必要とするため、Render.comの無料プランでは推論時にプロセスが停止する可能性があります。
+
+そのため、現時点では本番推論はローカル Docker 環境での実行を推奨しています。
+
+### 公開状況
+
+| 項目        | 状態                        |
+| ----------- | --------------------------- |
+| Frontend    | Vercelで公開                |
+| Backend API | Renderで `/health` まで確認 |
+| AI推論      | ローカルDocker実行を推奨    |
+
+この構成により、UIはブラウザから確認でき、実際のAI推論はローカル環境で再現できます。
+
+---
+
 ## セットアップ
 
 ```bash
 git clone https://github.com/KensukeOta/VisionInspector.git
+cd VisionInspector
 ```
 
 ### Backend
@@ -240,6 +263,12 @@ Swagger UI
 ```
 http://localhost:8000/docs
 ```
+
+---
+
+## Checkpointについて
+
+学習済みPaDiMモデル（checkpoint）はGitHubリポジトリには含めていません。 Dockerビルド時にGitHub Releasesから自動でダウンロードされます。 そのため、追加のダウンロード作業は不要です。
 
 ---
 
