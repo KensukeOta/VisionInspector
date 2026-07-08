@@ -31,8 +31,7 @@ RUN curl -fL \
     "$PADIM_CHECKPOINT_URL" \
     -o checkpoints/padim_bottle.ckpt \
     && test -s checkpoints/padim_bottle.ckpt \
-    && ls -lh checkpoints \
-    && file checkpoints/padim_bottle.ckpt
+    && ls -lh checkpoints
 
 EXPOSE 8000
 
