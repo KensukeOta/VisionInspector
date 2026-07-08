@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { SelectedImage } from '$lib/types/image';
 	import type { PredictionResponse } from '$lib/types/prediction';
+	import { API_URL } from '$lib/config';
 	import Card from '$lib/components/ui/Card.svelte';
 	import EmptyState from '$lib/components/ui/EmptyState.svelte';
 
@@ -11,7 +12,7 @@
 
 	let { image, result }: Props = $props();
 
-	const overlayUrl = $derived(`http://localhost:8000${result?.overlay_url}`);
+	const overlayUrl = $derived(result ? `${API_URL}${result.overlay_url}` : '');
 </script>
 
 <Card>

@@ -1,12 +1,11 @@
-import type { PredictionResponse } from '$lib/types/prediction';
 import type { ModelName } from '$lib/types/model';
+import type { PredictionResponse } from '$lib/types/prediction';
+import { API_URL } from '$lib/config';
 
 export type PredictRequest = {
 	file: File;
 	model: ModelName;
 };
-
-const API_URL = 'http://localhost:8000';
 
 export async function predictImage({ file, model }: PredictRequest): Promise<PredictionResponse> {
 	const formData = new FormData();
